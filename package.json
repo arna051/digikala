@@ -1,6 +1,6 @@
 {
   "name": "digikala",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A typed SDK for the Digikala Seller OpenAPI.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -21,6 +21,11 @@
       "types": "./dist/node/index.d.ts",
       "import": "./dist/node/index.js",
       "require": "./dist/node/index.cjs"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js",
+      "require": "./dist/schemas/index.cjs"
     },
     "./auth": {
       "types": "./dist/auth/index.d.ts",
@@ -61,6 +66,9 @@
       ],
       "node": [
         "dist/node/index.d.ts"
+      ],
+      "schemas": [
+        "dist/schemas/index.d.ts"
       ],
       "auth": [
         "dist/auth/index.d.ts"

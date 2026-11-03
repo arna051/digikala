@@ -10,6 +10,10 @@ import {
   DigikalaVariantsResource,
 } from '../src/node/index.js';
 import { DigikalaRequestValidationError } from '../src/validation/index.js';
+import {
+  ProductDetailsInputSchema as PublicProductDetailsInputSchema,
+  VariantCreateInputSchema as PublicVariantCreateInputSchema,
+} from '../src/schemas/index.js';
 
 function response(data: unknown): AxiosResponse {
   return {
@@ -35,6 +39,27 @@ function setup() {
 }
 
 describe('Product and variant creation', () => {
+  it('exposes database-safe creation schemas without the Node client', () => {
+    expect(
+      PublicProductDetailsInputSchema.safeParse({
+        categoryId: 10,
+        brandId: 20,
+        isIranian: false,
+      }).success,
+    ).toBe(true);
+    expect(
+      PublicVariantCreateInputSchema.safeParse({
+        productId: 100,
+        isActive: false,
+        orderLimit: 2,
+        marketplaceSellerStock: 0,
+        warrantyId: 2,
+        site: 'digikala',
+        shippingType: 'seller',
+      }).success,
+    ).toBe(true);
+  });
+
   it('serializes product discovery and strict draft details', async () => {
     const { transport, requests } = setup();
     const creation = new DigikalaProductCreationResource(transport);

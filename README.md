@@ -76,6 +76,7 @@ Node-only dependencies cannot leak into browser bundles.
 | `digikala`                  | Universal types, schemas, and core exports   |
 | `digikala/node`             | Authenticated Node.js seller client          |
 | `digikala/browser`          | Browser-safe exports without server secrets  |
+| `digikala/schemas`          | Database-safe Zod contracts and domain types |
 | `digikala/auth/node`        | RSA credentials and authentication lifecycle |
 | `digikala/account-manager`  | Encrypted SQLite multi-account management    |
 | `digikala/webhooks`         | Framework-neutral webhook handling           |

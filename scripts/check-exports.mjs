@@ -6,6 +6,7 @@ const require = createRequire(import.meta.url);
 const root = await import('digikala');
 const browser = await import('digikala/browser');
 const node = await import('digikala/node');
+const schemas = await import('digikala/schemas');
 const auth = await import('digikala/auth');
 const nodeAuth = await import('digikala/auth/node');
 const accountManager = await import('digikala/account-manager');
@@ -15,6 +16,9 @@ const mcp = await import('digikala/mcp');
 
 assert.equal(root.default, root.Digikala);
 assert.equal(typeof root.Schemas.Variants.list.safeParse, 'function');
+assert.equal(typeof root.VariantCreateInputSchema.safeParse, 'function');
+assert.equal(typeof schemas.ProductDetailsInputSchema.safeParse, 'function');
+assert.equal(typeof schemas.VariantCreateInputSchema.safeParse, 'function');
 assert.equal(browser.runtime, 'browser');
 assert.equal(node.runtime, 'node');
 assert.equal(typeof node.InMemoryDigikalaAccountStore, 'function');
@@ -45,11 +49,13 @@ assert.equal(typeof mcp.connectDigikalaMcpStdio, 'function');
 const cjsRoot = require('digikala');
 const cjsBrowser = require('digikala/browser');
 const cjsNode = require('digikala/node');
+const cjsSchemas = require('digikala/schemas');
 const cjsAccountManager = require('digikala/account-manager');
 
 assert.equal(cjsRoot.default, cjsRoot.Digikala);
 assert.equal(cjsBrowser.runtime, 'browser');
 assert.equal(cjsNode.runtime, 'node');
+assert.equal(typeof cjsSchemas.VariantCreateInputSchema.safeParse, 'function');
 assert.equal(typeof cjsAccountManager.createDigikalaAccountManager, 'function');
 
 console.log('ESM and CommonJS package exports are valid.');

@@ -25,3 +25,4 @@ export type {
   DigikalaRuntime,
   ResolvedDigikalaClientOptions,
 } from './types/index.js';
+export * from './schemas/index.js';

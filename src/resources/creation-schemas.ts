@@ -228,3 +228,24 @@ export const CreationWorkflowStateSchema = z
   .strict();
 
 export type CreationWorkflowState = z.infer<typeof CreationWorkflowStateSchema>;
+export type ProductSearchInput = z.input<typeof ProductSearchInputSchema>;
+export type ProductSuggestionInput = z.input<
+  typeof ProductSuggestionInputSchema
+>;
+export type ProductDetailsInput = z.input<typeof ProductDetailsInputSchema>;
+export type ProductTitleInput = z.input<typeof ProductTitleInputSchema>;
+export type ProductAttributesInput = z.input<
+  typeof ProductAttributesInputSchema
+>;
+export type ProductImageAiInput = z.input<typeof ProductImageAiInputSchema>;
+export type ProductSaveInput = z.input<typeof ProductSaveInputSchema>;
+export type BrandSearchInput = z.input<typeof BrandSearchInputSchema>;
+export type BrandRequestInput = z.input<typeof BrandRequestInputSchema>;
+export type VariantCreateInput = z.input<typeof VariantCreateInputSchema>;
+export type VariantReferenceRequest = z.input<
+  typeof VariantReferenceRequestSchema
+>;
+export type ThemeValuesInput = z.input<typeof ThemeValuesInputSchema>;
+export type DraftProductsInput = z.input<typeof DraftProductsInputSchema>;
+export type WarrantyRequestInput = z.input<typeof WarrantyRequestInputSchema>;
+export type UploadImageInput = z.input<typeof UploadImageInputSchema>;
