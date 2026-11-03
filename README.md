@@ -1,15 +1,50 @@
-# digikala
+# Digikala Seller SDK for TypeScript
 
-A TypeScript SDK for the Digikala Seller OpenAPI with explicit universal,
-browser, Node.js, webhook, and MCP package boundaries.
+**By: Hippogriff Studio**  
+[https://hippogriff.ir](https://hippogriff.ir)  
+**Call me:** [+989038719255](tel:+989038719255)
 
-## Install
+> **DO NOT FORGET TO DONATE!** Your support helps maintain and improve this
+> open-source package.
+
+A strongly typed SDK for the Digikala Seller OpenAPI, built for reliable
+Node.js integrations with clearly separated browser-safe, webhook, account
+management, and MCP entry points.
+
+## Features
+
+- TypeScript-first API with exported types and interfaces
+- Runtime request and response validation with Zod
+- Axios transport with a 60-second default timeout
+- Automatic access-token refresh and safe credential lifecycle management
+- Product, variant, inventory, and order resources
+- Deterministic product and variant creation workflows
+- Optional SQLite caching with 24-hour freshness and forced refresh support
+- Optional local semantic search over cached catalog data
+- Encrypted, multi-account Digikala account management
+- Cross-account product, inventory, reservation, and order tracking
+- Framework-neutral webhooks with an Express adapter
+- Permission-controlled MCP integration for AI clients
+- ESM, CommonJS, Node.js, and browser-safe package exports
+
+## Requirements
+
+- Node.js 20 or newer
+- A Digikala seller account with OpenAPI access
+- npm, pnpm, or Yarn
+
+> [!IMPORTANT]
+> Private keys, access tokens, and refresh tokens belong on the server. Browser
+> applications must communicate with a trusted backend and must never receive
+> Digikala credentials.
+
+## Installation
 
 ```sh
 npm install digikala
 ```
 
-## Usage
+## Quick start
 
 ```ts
 import Digikala, { Types } from 'digikala';
@@ -33,6 +68,19 @@ const result = Schemas.Variants.updateStock.safeParse({
 Runtime-specific imports are available from `digikala/browser` and
 `digikala/node`. Webhook and MCP integrations use their own subpath exports so
 Node-only dependencies cannot leak into browser bundles.
+
+### Package entry points
+
+| Import                      | Purpose                                      |
+| --------------------------- | -------------------------------------------- |
+| `digikala`                  | Universal types, schemas, and core exports   |
+| `digikala/node`             | Authenticated Node.js seller client          |
+| `digikala/browser`          | Browser-safe exports without server secrets  |
+| `digikala/auth/node`        | RSA credentials and authentication lifecycle |
+| `digikala/account-manager`  | Encrypted SQLite multi-account management    |
+| `digikala/webhooks`         | Framework-neutral webhook handling           |
+| `digikala/webhooks/express` | Express webhook adapter                      |
+| `digikala/mcp`              | Model Context Protocol server integration    |
 
 ## Create and authenticate an account
 
@@ -465,3 +513,18 @@ await connectDigikalaMcpStdio({
 The mutation tools update stock, price, and activation status or cancel an
 order item. Denied calls and SDK errors return sanitized MCP errors; detailed
 errors are available only through the optional server-side `onError` callback.
+
+## Support the project
+
+If this SDK saves you development time, please support its continued
+maintenance.
+
+> **DO NOT FORGET TO DONATE!**
+
+For support, collaboration, or donation details, visit
+[Hippogriff Studio](https://hippogriff.ir) or call
+[+989038719255](tel:+989038719255).
+
+## License
+
+Released under the MIT License.
