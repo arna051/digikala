@@ -136,6 +136,12 @@ describe('Seller API resources', () => {
       status: 'ok',
       data: { items: [{ order_id: 20, product_variant_id: 3 }] },
     });
+
+    await expect(
+      new DigikalaOrdersResource(listSetup.transport).list({ size: 1 }),
+    ).rejects.toThrow();
+    expect(listSetup.requests).toHaveLength(0);
+
     await new DigikalaOrdersResource(listSetup.transport).list({
       search: { createdToday: true },
     });

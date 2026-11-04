@@ -102,7 +102,9 @@ const ProductsListRequestSchema = z
 const OrdersListRequestSchema = z
   .object({
     ...paginationFields,
-    size: z.number().int().positive().max(100).default(50),
+    // The published OpenAPI schema omits this lower bound, but the live
+    // seller API rejects smaller pages with a 400 validation error.
+    size: z.number().int().min(10).max(100).default(50),
     sort: z.literal('order_created_at').default('order_created_at'),
     order: z.enum(['asc', 'desc']).default('desc'),
     search: z
