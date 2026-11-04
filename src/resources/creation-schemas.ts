@@ -4,6 +4,7 @@ import { apiResponseSchema, PositiveIdSchema } from '../validation/common.js';
 const nonEmpty = z.string().trim().min(1);
 const nonNegative = z.number().int().nonnegative();
 const optionalDimension = z.number().nonnegative().optional();
+const optionalPackageDimension = z.number().int().nonnegative().optional();
 const JsonValueSchema: z.ZodType<unknown> = z.unknown();
 
 export const CreationResponseSchema = apiResponseSchema(JsonValueSchema);
@@ -38,13 +39,13 @@ export const ProductDetailsInputSchema = z
     isIranian: z.boolean(),
     productClasses: z.array(z.union([z.string(), z.number()])).optional(),
     fake: z.boolean().optional(),
-    fakeReasons: z.array(nonEmpty).optional(),
-    generalMefaId: PositiveIdSchema.optional(),
+    fakeReasons: z.array(PositiveIdSchema).optional(),
+    generalMefaId: nonEmpty.optional(),
     exclusiveMefaId: nonEmpty.optional(),
-    packageWidth: optionalDimension,
-    packageHeight: optionalDimension,
-    packageLength: optionalDimension,
-    packageWeight: optionalDimension,
+    packageWidth: optionalPackageDimension,
+    packageHeight: optionalPackageDimension,
+    packageLength: optionalPackageDimension,
+    packageWeight: optionalPackageDimension,
     description: nonEmpty.optional(),
     disadvantages: z.array(nonEmpty).optional(),
     advantages: z.array(nonEmpty).optional(),
@@ -128,10 +129,10 @@ export const VariantCreateInputSchema = z
     threeHourDelivery: z.boolean().optional(),
     colorId: PositiveIdSchema.optional(),
     sizeId: PositiveIdSchema.optional(),
-    packageWidth: optionalDimension,
-    packageHeight: optionalDimension,
-    packageLength: optionalDimension,
-    packageWeight: optionalDimension,
+    packageWidth: optionalPackageDimension,
+    packageHeight: optionalPackageDimension,
+    packageLength: optionalPackageDimension,
+    packageWeight: optionalPackageDimension,
     goldPriceParameters: z.record(z.string(), JsonValueSchema).optional(),
     sizes: z.array(z.record(z.string(), JsonValueSchema)).optional(),
     photosDetail: z.array(z.record(z.string(), JsonValueSchema)).optional(),

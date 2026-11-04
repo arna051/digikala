@@ -84,6 +84,28 @@ describe('Product and variant creation', () => {
     });
   });
 
+  it('matches OpenAPI identifier and packaging types', () => {
+    expect(
+      PublicProductDetailsInputSchema.safeParse({
+        categoryId: 10,
+        brandId: 20,
+        isIranian: false,
+        fakeReasons: [1, 2],
+        generalMefaId: '2132114141312321',
+        packageWeight: 300,
+      }).success,
+    ).toBe(true);
+    expect(
+      PublicProductDetailsInputSchema.safeParse({
+        categoryId: 10,
+        brandId: 20,
+        isIranian: false,
+        fakeReasons: ['reason'],
+        packageWeight: 1.5,
+      }).success,
+    ).toBe(false);
+  });
+
   it('creates an inactive zero-stock variant without leaking productId into the body', async () => {
     const { transport, requests } = setup();
     const creation = new DigikalaVariantCreationResource(transport);

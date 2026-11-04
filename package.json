@@ -1,6 +1,6 @@
 {
   "name": "digikala",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A typed SDK for the Digikala Seller OpenAPI.",
   "type": "module",
   "main": "./dist/index.cjs",
