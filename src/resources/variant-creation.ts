@@ -4,36 +4,54 @@ import { IdInputSchema } from './schemas.js';
 import {
   CreationResponseSchema,
   ThemeValuesInputSchema,
+  VariantCreationRequirementsResponseSchema,
+  VariantCreationResponseSchema,
   VariantCreateInputSchema,
   VariantReferenceRequestSchema,
   WarrantyRequestInputSchema,
+  validateVariantCreationInput,
 } from './creation-schemas.js';
+import type { VariantCreationRequirements } from './creation-schemas.js';
+import { DigikalaRequestValidationError } from '../validation/errors.js';
+
+function snake(value: string) {
+  return value.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+}
+
+function deepSnake(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(deepSnake);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [snake(key), deepSnake(item)]),
+  );
+}
 
 function variantBody(input: z.output<typeof VariantCreateInputSchema>) {
   const rest: Record<string, unknown> = { ...input };
   delete rest.productId;
-  return Object.fromEntries(
-    Object.entries(rest)
-      .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => [
-        key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
-        value,
-      ]),
+  return deepSnake(
+    Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    ),
   );
 }
 
 export class DigikalaVariantCreationResource {
+  readonly #requirements = new Map<number, VariantCreationRequirements>();
+
   constructor(private readonly transport: DigikalaAxiosTransport) {}
 
-  getRequirements(productId: number) {
-    return this.transport.request({
+  async getRequirements(productId: number) {
+    const response = await this.transport.request({
       method: 'GET',
       path: `variants/creation/${productId}`,
       input: { id: productId },
       inputSchema: IdInputSchema,
-      outputSchema: CreationResponseSchema,
+      outputSchema: VariantCreationRequirementsResponseSchema,
       serialize: () => ({}),
     });
+    this.#requirements.set(productId, response.data);
+    return response;
   }
 
   getSizeTypes() {
@@ -71,13 +89,28 @@ export class DigikalaVariantCreationResource {
     });
   }
 
-  create(input: z.input<typeof VariantCreateInputSchema>) {
+  async create(
+    input: z.input<typeof VariantCreateInputSchema>,
+    options: { requirements?: VariantCreationRequirements } = {},
+  ) {
+    let parsed: z.output<typeof VariantCreateInputSchema>;
+    try {
+      parsed = validateVariantCreationInput(
+        input,
+        options.requirements ?? this.#requirements.get(input.productId),
+      );
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new DigikalaRequestValidationError(error);
+      }
+      throw error;
+    }
     return this.transport.request({
       method: 'POST',
-      path: `variants/creation/${input.productId}`,
-      input,
+      path: `variants/creation/${parsed.productId}`,
+      input: parsed,
       inputSchema: VariantCreateInputSchema,
-      outputSchema: CreationResponseSchema,
+      outputSchema: VariantCreationResponseSchema,
       serialize: (parsed) => ({ data: variantBody(parsed) }),
     });
   }

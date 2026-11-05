@@ -25,11 +25,11 @@ function response(data: unknown): AxiosResponse {
   };
 }
 
-function setup() {
+function setup(data: unknown = { status: 'ok', data: { id: 1 } }) {
   const requests: AxiosRequestConfig[] = [];
   const adapter = vi.fn<AxiosAdapter>((config) => {
     requests.push(config);
-    return Promise.resolve(response({ status: 'ok', data: { id: 1 } }));
+    return Promise.resolve(response(data));
   });
   const transport = new DigikalaAxiosTransport({
     adapter,
@@ -141,6 +141,64 @@ describe('Product and variant creation', () => {
     ).rejects.toBeInstanceOf(DigikalaRequestValidationError);
   });
 
+  it('serializes multi-theme values and validates cached product requirements', async () => {
+    const requirementsSetup = setup({
+      status: 'ok',
+      data: {
+        lead_time_max: 3,
+        themes: [
+          { id: 7, label: 'Color' },
+          { id: 8, label: 'Size' },
+        ],
+        size_guide: { is_required_on_create: true },
+        variant_photo_upload: { main_image_mandatory: true },
+      },
+    });
+    const creation = new DigikalaVariantCreationResource(
+      requirementsSetup.transport,
+    );
+    await creation.getRequirements(100);
+
+    await expect(
+      creation.create({
+        productId: 100,
+        isActive: false,
+        orderLimit: 2,
+        marketplaceSellerStock: 0,
+        warrantyId: 2,
+        site: 'digikala',
+        shippingType: 'seller',
+        leadTime: 4,
+        themeValues: [{ themeId: 7, themeValueId: 70 }],
+      }),
+    ).rejects.toBeInstanceOf(DigikalaRequestValidationError);
+    expect(requirementsSetup.requests).toHaveLength(1);
+
+    const createSetup = setup();
+    await new DigikalaVariantCreationResource(createSetup.transport).create({
+      productId: 100,
+      isActive: false,
+      orderLimit: 2,
+      marketplaceSellerStock: 0,
+      warrantyId: 2,
+      site: 'digikala',
+      shippingType: 'seller',
+      themeValues: [
+        { themeId: 7, themeValueId: 70 },
+        { themeId: 8, themeValueId: 80 },
+      ],
+      photosDetail: [{ id: 'image-1', isMain: true }],
+      sizes: [{ id: 'chest', value: 42 }],
+    });
+    expect(JSON.parse(String(createSetup.requests[0]?.data))).toMatchObject({
+      theme_values: [
+        { theme_id: 7, theme_value_id: 70 },
+        { theme_id: 8, theme_value_id: 80 },
+      ],
+      photos_detail: [{ id: 'image-1', is_main: true }],
+    });
+  });
+
   it('archives a variant with the documented generic mutation response', async () => {
     const { transport, requests } = setup();
     const variants = new DigikalaVariantsResource(transport);
@@ -181,5 +239,24 @@ describe('Product and variant creation', () => {
       variantId: 20,
     });
     expect(() => JSON.stringify(state)).not.toThrow();
+  });
+
+  it('tracks duplicate and removed moderation outcomes', () => {
+    const initial = createCreationWorkflow({
+      vendorId: 'vendor-1',
+      mode: 'new_product',
+    });
+    const duplicate = advanceCreationWorkflow(initial, {
+      type: 'product_duplicate',
+      duplicateProductId: 99,
+    });
+    expect(duplicate).toMatchObject({
+      status: 'ready_for_variant',
+      moderationStatus: 'duplicate',
+      productId: 99,
+    });
+    expect(
+      advanceCreationWorkflow(initial, { type: 'product_removed' }),
+    ).toMatchObject({ status: 'failed', moderationStatus: 'removed' });
   });
 });

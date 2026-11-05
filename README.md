@@ -277,6 +277,19 @@ await client.productEditing.publish({ productId });
 Creation is exposed as deterministic, validated resource methods. It does not
 guess catalog data and does not use an LLM.
 
+The SDK follows Digikala's content lifecycle: a newly saved product is a
+`draft`; releasing it moves it to `waiting_for_confirm`; only `approved`
+products can receive variants. `in_review` products must be corrected,
+`removed` products cannot be reused, and a `duplicate` result points to the
+existing DKP that should receive the variant instead.
+
+Terminology is reflected in the public schemas:
+
+- DKP (`productId`) is the shared catalog product across all sellers.
+- DKPC (`variantId`) is a seller-specific sellable variant of that DKP.
+- A category may require no theme, one theme, or at most two themes (currently
+  multi-theme is used for fashion combinations such as color and size).
+
 For a product that already exists in Digikala's catalog, search it, verify that
 the current seller may sell it, assign it to the seller, then fetch its live
 variant requirements before creating a variant:
@@ -305,6 +318,18 @@ const created = await client.variantCreation.create({
   packageWidth: 8,
   packageHeight: 10,
   packageWeight: 330,
+});
+```
+
+`getRequirements()` is remembered by the resource. The following `create()`
+automatically validates lead-time limits, package dimension bounds, required
+size-guide data, mandatory main images, and allowed theme IDs before making a
+network request. Requirements can also be supplied explicitly, which is useful
+when they were persisted:
+
+```ts
+await client.variantCreation.create(input, {
+  requirements: savedRequirements,
 });
 ```
 

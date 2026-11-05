@@ -8,8 +8,12 @@ export type CreationWorkflowEvent =
   | { type: 'details_validated'; draftProductId: number }
   | { type: 'attributes_validated' }
   | { type: 'images_uploaded' }
+  | { type: 'product_saved'; productId?: number }
   | { type: 'product_submitted'; productId?: number }
   | { type: 'product_approved'; productId: number }
+  | { type: 'product_in_review'; message?: string }
+  | { type: 'product_removed'; message?: string }
+  | { type: 'product_duplicate'; duplicateProductId: number }
   | { type: 'variant_created'; variantId: number }
   | { type: 'needs_input'; fields: string[] }
   | { type: 'failed'; message: string };
@@ -53,6 +57,12 @@ export function advanceCreationWorkflow(
         status: 'ready_for_variant',
       });
       break;
+    case 'product_saved':
+      completed.add('product_saved');
+      if (event.productId) next.productId = event.productId;
+      next.moderationStatus = 'draft';
+      next.status = 'collecting_images';
+      break;
     case 'details_validated':
       completed.add('details_validated');
       Object.assign(next, {
@@ -71,11 +81,30 @@ export function advanceCreationWorkflow(
     case 'product_submitted':
       completed.add('product_submitted');
       if (event.productId) next.productId = event.productId;
+      next.moderationStatus = 'waiting_for_confirm';
       next.status = 'pending_moderation';
       break;
     case 'product_approved':
       completed.add('product_approved');
       next.productId = event.productId;
+      next.moderationStatus = 'approved';
+      next.status = 'ready_for_variant';
+      break;
+    case 'product_in_review':
+      next.moderationStatus = 'in_review';
+      next.status = 'collecting_details';
+      next.lastError = event.message;
+      break;
+    case 'product_removed':
+      next.moderationStatus = 'removed';
+      next.status = 'failed';
+      next.lastError = event.message ?? 'Digikala removed this product';
+      break;
+    case 'product_duplicate':
+      completed.add('product_duplicate');
+      next.moderationStatus = 'duplicate';
+      next.duplicateProductId = event.duplicateProductId;
+      next.productId = event.duplicateProductId;
       next.status = 'ready_for_variant';
       break;
     case 'variant_created':
