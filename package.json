@@ -1,6 +1,6 @@
 {
   "name": "digikala",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A typed SDK for the Digikala Seller OpenAPI.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -99,6 +99,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check",
     "check:browser": "node scripts/check-browser-boundary.mjs",
     "check:exports": "node scripts/check-exports.mjs",
+    "check:service-hub": "node scripts/check-service-hub-contract.mjs",
     "clean": "rimraf dist",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -106,7 +107,7 @@
     "lint:fix": "eslint src test tsup.config.ts --fix",
     "prepublishOnly": "npm run verify",
     "test": "vitest run",
-    "verify": "npm run check && npm test && npm run build && npm run check:exports && npm run check:browser",
+    "verify": "npm run check && npm test && npm run build && npm run check:exports && npm run check:browser && npm run check:service-hub",
     "typecheck": "tsc --noEmit"
   },
   "engines": {

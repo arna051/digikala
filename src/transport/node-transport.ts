@@ -299,6 +299,7 @@ export class DigikalaAxiosTransport {
           headers: {
             ...serialized.headers,
             Accept: 'application/json',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
             'User-Agent': `DigikalaTrustedBot/SelfToken/${sellerCode}`,
           },

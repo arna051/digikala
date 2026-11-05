@@ -205,8 +205,50 @@ const orders = await client.orders.list({ search: { createdToday: true } });
 ```
 
 Available operations include variant list/detail/stock, stock and price
-updates, activation changes, seller product listing and content score, plus
-active order listing and order-item cancellation.
+updates, activation changes, seller product listing and content score, order
+listing/history/statistics/cancellation, seller profile sections, DK shipment
+management, and product editing/publishing.
+
+Service Hub is treated as the behavioral documentation layer, while the
+Swagger specification remains the machine-readable contract. For official
+operations that do not yet have a named resource, use the safe generic bridge;
+it still applies authentication, fixed-origin path checks, the 60-second
+timeout, rate limiting, and JSON headers:
+
+```ts
+const balance = await client.serviceHub.request({
+  method: 'GET',
+  path: 'shipping-services/wallet/balance',
+});
+```
+
+Common Service Hub domains have named modules:
+
+```ts
+const profile = await client.profile.get({ mini: true });
+const business = await client.profile.business();
+
+const history = await client.orders.history({
+  orderType: 'returned',
+  shippingType: 'digikala',
+});
+const statistics = await client.orders.statistics();
+
+const shipments = await client.shipments.list({
+  search: { shipmentStatus: 'new' },
+});
+const packages = await client.shipments.packages({ warehouseId: 123 });
+
+const editable = await client.productEditing.get(productId);
+await client.productEditing.update({
+  productId,
+  categoryId,
+  brandId,
+  isIranian: false,
+  titleFa: 'عنوان ویرایش‌شده',
+});
+await client.productEditing.publish({ productId });
+```
 
 ## Create products and variants
 

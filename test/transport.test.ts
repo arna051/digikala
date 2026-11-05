@@ -44,6 +44,7 @@ describe('Axios transport', () => {
       expect(config.timeout).toBe(60_000);
       expect(config.url).toBe('variants/1');
       expect(config.headers.get('Authorization')).toBe('Bearer secret-token');
+      expect(config.headers.get('Content-Type')).toBe('application/json');
       expect(config.headers.get('User-Agent')).toBe(
         'DigikalaTrustedBot/SelfToken/123',
       );

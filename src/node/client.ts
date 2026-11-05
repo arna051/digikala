@@ -29,6 +29,10 @@ import {
   DigikalaProductsResource,
   DigikalaVariantCreationResource,
   DigikalaVariantsResource,
+  DigikalaProfileResource,
+  DigikalaShipmentsResource,
+  DigikalaProductEditingResource,
+  DigikalaServiceHubResource,
 } from '../resources/index.js';
 import {
   DigikalaCacheManager,
@@ -90,6 +94,10 @@ export class DigikalaNodeClient extends Digikala {
   readonly orders: DigikalaOrdersResource;
   readonly productCreation: DigikalaProductCreationResource;
   readonly variantCreation: DigikalaVariantCreationResource;
+  readonly profile: DigikalaProfileResource;
+  readonly shipments: DigikalaShipmentsResource;
+  readonly productEditing: DigikalaProductEditingResource;
+  readonly serviceHub: DigikalaServiceHubResource;
   readonly cache?: DigikalaCacheManager;
   #account?: DigikalaAccountRecord;
   #updateTail: Promise<void> = Promise.resolve();
@@ -183,6 +191,10 @@ export class DigikalaNodeClient extends Digikala {
     this.orders = new DigikalaOrdersResource(this.transport);
     this.productCreation = new DigikalaProductCreationResource(this.transport);
     this.variantCreation = new DigikalaVariantCreationResource(this.transport);
+    this.profile = new DigikalaProfileResource(this.transport);
+    this.shipments = new DigikalaShipmentsResource(this.transport);
+    this.productEditing = new DigikalaProductEditingResource(this.transport);
+    this.serviceHub = new DigikalaServiceHubResource(this.transport);
     this.cache?.registerLoader('products', (page, size) =>
       this.products.list({ page, size }, { cachePolicy: 'network-only' }),
     );
