@@ -39,6 +39,7 @@ import {
   SqliteDigikalaCacheStore,
   TransformersJsEmbeddingProvider,
 } from '../cache/index.js';
+import { DigikalaSellerApi } from '../generated/index.js';
 import type {
   DigikalaCacheStore,
   DigikalaEmbeddingProvider,
@@ -98,6 +99,8 @@ export class DigikalaNodeClient extends Digikala {
   readonly shipments: DigikalaShipmentsResource;
   readonly productEditing: DigikalaProductEditingResource;
   readonly serviceHub: DigikalaServiceHubResource;
+  /** Complete official Seller OpenAPI, organized into dedicated domains. */
+  readonly api: DigikalaSellerApi;
   readonly cache?: DigikalaCacheManager;
   #account?: DigikalaAccountRecord;
   #updateTail: Promise<void> = Promise.resolve();
@@ -195,6 +198,7 @@ export class DigikalaNodeClient extends Digikala {
     this.shipments = new DigikalaShipmentsResource(this.transport);
     this.productEditing = new DigikalaProductEditingResource(this.transport);
     this.serviceHub = new DigikalaServiceHubResource(this.transport);
+    this.api = new DigikalaSellerApi(this.transport);
     this.cache?.registerLoader('products', (page, size) =>
       this.products.list({ page, size }, { cachePolicy: 'network-only' }),
     );

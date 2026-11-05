@@ -1,6 +1,6 @@
 {
   "name": "digikala",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A typed SDK for the Digikala Seller OpenAPI.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -100,14 +100,16 @@
     "check:browser": "node scripts/check-browser-boundary.mjs",
     "check:exports": "node scripts/check-exports.mjs",
     "check:service-hub": "node scripts/check-service-hub-contract.mjs",
+    "check:openapi": "node scripts/generate-openapi.mjs --check",
     "clean": "rimraf dist",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "generate:openapi": "node scripts/generate-openapi.mjs",
     "lint": "eslint src test tsup.config.ts",
     "lint:fix": "eslint src test tsup.config.ts --fix",
     "prepublishOnly": "npm run verify",
     "test": "vitest run",
-    "verify": "npm run check && npm test && npm run build && npm run check:exports && npm run check:browser && npm run check:service-hub",
+    "verify": "npm run check:openapi && npm run check && npm test && npm run build && npm run check:exports && npm run check:browser && npm run check:service-hub",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
@@ -135,16 +137,17 @@
     "@modelcontextprotocol/client": "^2.4.0",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
+    "better-sqlite3": "^12.4.1",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.10",
-    "better-sqlite3": "^12.4.1",
     "rimraf": "^6.1.3",
     "sqlite-vec": "^0.1.9",
     "tsup": "^9.0.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "yaml": "^2.9.1"
   },
   "peerDependencies": {
     "@huggingface/transformers": "^4.3.2",

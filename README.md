@@ -210,10 +210,32 @@ listing/history/statistics/cancellation, seller profile sections, DK shipment
 management, and product editing/publishing.
 
 Service Hub is treated as the behavioral documentation layer, while the
-Swagger specification remains the machine-readable contract. For official
-operations that do not yet have a named resource, use the safe generic bridge;
-it still applies authentication, fixed-origin path checks, the 60-second
-timeout, rate limiting, and JSON headers:
+Swagger specification remains the machine-readable contract. The complete
+authenticated contract is generated into 36 dedicated domain modules with 277
+typed, Zod-validated operations:
+
+```ts
+const inventory = await client.api.inventories.getInventories({
+  query: { page: 1, size: 50 },
+});
+
+const campaigns = await client.api.searchAds.getSearchAdsV2Campaigns({
+  query: { page: 1 },
+});
+
+const packages = await client.api.packages.getPackages({
+  query: { 'search[status]': 'new' },
+});
+```
+
+Inputs are deliberately separated into `path`, `query`, and `body`, so unusual
+Digikala field names remain exact and no query value can accidentally enter a
+URL path. Authentication and health-check operations stay in the specialized
+authentication layer.
+
+The safe generic bridge remains available for newly released or undocumented
+operations. It still applies authentication, fixed-origin path checks, the
+60-second timeout, rate limiting, and JSON headers:
 
 ```ts
 const balance = await client.serviceHub.request({
@@ -222,7 +244,7 @@ const balance = await client.serviceHub.request({
 });
 ```
 
-Common Service Hub domains have named modules:
+The earlier ergonomic resources remain stable for common workflows:
 
 ```ts
 const profile = await client.profile.get({ mini: true });

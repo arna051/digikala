@@ -72,6 +72,7 @@ export type {
   SerializedDigikalaRequest,
 } from '../transport/types.js';
 export * from '../resources/index.js';
+export * from '../generated/index.js';
 export {
   DigikalaCacheManager,
   DigikalaCacheMissError,

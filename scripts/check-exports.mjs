@@ -26,6 +26,8 @@ assert.equal(typeof node.DigikalaAxiosTransport, 'function');
 assert.equal(typeof node.DigikalaVariantsResource, 'function');
 assert.equal(typeof node.DigikalaProductsResource, 'function');
 assert.equal(typeof node.DigikalaOrdersResource, 'function');
+assert.equal(typeof node.DigikalaSellerApi, 'function');
+assert.equal(node.DIGIKALA_GENERATED_OPERATION_COUNT, 277);
 assert.equal(typeof node.isAccessTokenExpiring, 'function');
 assert.equal(typeof node.DigikalaTokenRefreshRejectedError, 'function');
 assert.equal(typeof node.DigikalaCacheManager, 'function');
